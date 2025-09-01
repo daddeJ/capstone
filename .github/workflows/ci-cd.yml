@@ -51,10 +51,10 @@ jobs:
       
       # 7️⃣ Fly login using API token
       - name: Fly Login
-        run: flyctl auth token ${{ secrets.FLY_API_TOKEN }}
+        run: fly auth login ${{ secrets.FLY_API_TOKEN }}
       
       # 8️⃣ Deploy to Fly.io
       - name: Deploy to Fly.io
-        run: flyctl deploy --image ${{ secrets.DOCKER_USERNAME }}/zoo-api:latest
+        run: fly deploy --image ${{ secrets.DOCKER_USERNAME }}/zoo-api:latest
 
       
