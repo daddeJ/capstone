@@ -17,26 +17,30 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # 2️⃣ Test with Docker Compose (as you prefer)
-      - name: Build & Test with Docker Compose
+      # 2️⃣ Build with Docker Compose (just check it builds)
+      - name: Build with Docker Compose
         run: |
-          docker compose -f docker-compose.yml up --build -d
-          # Wait for services to be ready
-          sleep 30
-          # Run tests (adjust URL as needed)
-          curl -f http://localhost:8080/actuator/health || exit 1
-          # Stop services
-          docker compose down
+          echo "Building application with Docker Compose..."
+          docker-compose -f docker-compose.yml build
+          echo "✅ Build successful!"
 
-      # 3️⃣ Build production Docker image (single service for deployment)
+      # 3️⃣ Test with Maven (separate test step)
+      - name: Run Unit Tests
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}/zoo:/app \
+            -w /app maven:3.9.8-eclipse-temurin-21 \
+            mvn clean test
+
+      # 4️⃣ Build production image (if needed)
       - name: Build Production Image
         run: |
-          docker build -f zoo/Dockerfile.prod -t zoo-api:latest zoo/
+          docker build -t zoo-api:latest zoo/
 
-      # 4️⃣ Deploy notification
+      # 5️⃣ Ready for deployment
       - name: Ready for Deployment
         if: github.ref == 'refs/heads/development'
         run: |
-          echo "✅ Tests passed with Docker Compose!"
-          echo "✅ Production image built successfully!"
+          echo "✅ Build successful!"
+          echo "✅ Tests passed!"
           echo "Ready for deployment to hosting platform."
