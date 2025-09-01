@@ -29,32 +29,11 @@ jobs:
       # 3️⃣ Build runtime Docker image
       - name: Build Docker image
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/zoo-api:latest zoo/
+          docker build -t zoo-api:latest zoo/
 
-      # 4️⃣ Login to Docker Hub
-      - name: Docker Hub Login
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
-      # 5️⃣ Push Docker image
-      - name: Push Docker image
+      # 4️⃣ Deploy to Railway (Railway will pull from GitHub and build)
+      - name: Deploy to Railway
+        if: github.ref == 'refs/heads/development'
         run: |
-          docker push ${{ secrets.DOCKER_USERNAME }}/zoo-api:latest
-
-      # 6️⃣ Install Fly CLI and add to PATH
-      - name: Install Fly CLI
-        run: |
-          curl -L https://fly.io/install.sh | sh
-          echo "$HOME/.fly/bin" >> $GITHUB_PATH
-
-      # 7️⃣ Fly login using API token
-      - name: Fly Login
-        run: |
-          echo "${{ secrets.FLY_API_TOKEN }}" | fly auth login
-
-      # 8️⃣ Deploy to Fly.io
-      - name: Deploy to Fly.io
-        run: |
-          fly deploy --image ${{ secrets.DOCKER_USERNAME }}/zoo-api:latest
+          echo "Railway will auto-deploy from GitHub integration"
+          echo "No manual deployment needed - Railway watches this repo"
