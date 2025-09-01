@@ -1,0 +1,27 @@
+# Java source files
+*.java text
+
+# XML, properties, and config files
+*.xml text
+*.properties text
+*.yml text
+*.yaml text
+
+# Maven wrapper scripts
+mvnw text eol=lf
+mvnw.cmd text eol=crlf
+
+# Shell scripts
+*.sh text eol=lf
+
+# Docker files
+Dockerfile text
+.dockerignore text
+
+# Git ignore / attributes files
+.gitignore text
+.gitattributes text
+
+# IDE folders (ignored anyway, just in case)
+.idea/** text eol=crlf
+.vscode/** text eol=lf
