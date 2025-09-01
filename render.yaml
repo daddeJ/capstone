@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: zoo-api
+    env: docker
+    dockerCommand: docker-compose up --build
+    dockerfilePath: ./docker-compose.yml
+    plan: free
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: PORT
+        value: 8080

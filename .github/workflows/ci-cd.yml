@@ -23,7 +23,6 @@ jobs:
           echo "Building application with Docker Compose..."
           docker compose -f docker-compose.yml build
           echo "✅ Build successful!"
-
       # 3️⃣ Test with Maven (separate test step)
       - name: Run Unit Tests
         run: |
@@ -31,12 +30,10 @@ jobs:
             -v ${{ github.workspace }}/zoo:/app \
             -w /app maven:3.9.8-eclipse-temurin-21 \
             mvn clean test
-
       # 4️⃣ Build production image (if needed)
       - name: Build Production Image
         run: |
           docker build -t zoo-api:latest zoo/
-
       # 5️⃣ Ready for deployment
       - name: Ready for Deployment
         if: github.ref == 'refs/heads/development'
