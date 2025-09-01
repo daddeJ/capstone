@@ -21,7 +21,7 @@ jobs:
       # 3️⃣ Build and run Docker Compose
       - name: Build and start services
         run: |
-          docker-compose -f docker-compose.yml up --build -d
+          docker compose -f docker-compose.yml up --build -d
           docker ps -a   # optional, list running containers
 
       # 4️⃣ Run tests inside container
@@ -30,4 +30,4 @@ jobs:
 
       # 5️⃣ Tear down containers after tests
       - name: Stop and remove containers
-        run: docker-compose -f docker-compose.yml down
+        run: docker compose -f docker-compose.yml down
