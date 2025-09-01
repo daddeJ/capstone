@@ -43,11 +43,17 @@ jobs:
         run: |
           docker push ${{ secrets.DOCKER_USERNAME }}/zoo-api:latest
 
-      # 6️⃣ Fly.io login
+      # 6️⃣ Install Fly CLI
+      - name: Install Fly CLI
+        run: |
+          curl -L https://fly.io/install.sh | sh
+          export PATH="$HOME/.fly/bin:$PATH"
+      
+      # 7️⃣ Fly login using API token
       - name: Fly Login
         run: flyctl auth token ${{ secrets.FLY_API_TOKEN }}
-
-      # 7️⃣ Deploy to Fly.io
+      
+      # 8️⃣ Deploy to Fly.io
       - name: Deploy to Fly.io
         run: flyctl deploy --image ${{ secrets.DOCKER_USERNAME }}/zoo-api:latest
 
