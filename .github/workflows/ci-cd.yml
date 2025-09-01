@@ -4,30 +4,37 @@ on:
   push:
     branches:
       - development
+      - feature/**
 
 jobs:
-  build-and-test:
+  build-test-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout code
+      # 1️⃣ Checkout the code
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # 2️⃣ Set up Docker Buildx
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      # 3️⃣ Build and run Docker Compose
-      - name: Build and start services
+      # 2️⃣ Build and test with Maven container
+      - name: Build and run tests
         run: |
-          docker compose -f docker-compose.yml up --build -d
-          docker ps -a   # optional, list running containers
+          docker run --rm \
+            -v ${{ github.workspace }}/zoo:/app \
+            -w /app maven:3.9.2-openjdk-21 mvn clean test package -DskipTests=false
 
-      # 4️⃣ Run tests inside container
-      - name: Run tests
-        run: docker exec zoo-app ./mvnw test
+      # 3️⃣ Build runtime Docker image
+      - name: Build runtime image
+        run: |
+          docker build -t zoo-api:latest zoo/
 
-      # 5️⃣ Tear down containers after tests
+      # 4️⃣ Start services with Docker Compose
+      - name: Start services
+        run: docker-compose -f docker-compose.yml up -d
+
+      # 5️⃣ Optional: Run integration tests
+      # - name: Integration tests
+      #   run: docker exec -w /app zoo-app ./mvnw verify
+
+      # 6️⃣ Tear down containers
       - name: Stop and remove containers
-        run: docker compose -f docker-compose.yml down
+        run: docker-compose -f docker-compose.yml down
