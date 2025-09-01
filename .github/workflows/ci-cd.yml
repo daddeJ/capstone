@@ -1,6 +1,5 @@
 name: CI/CD Pipeline
 
-# Trigger only on development branch or PRs targeting it
 on:
   push:
     branches:
@@ -18,22 +17,27 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # 2️⃣ Build & run unit tests in Maven container
-      - name: Build & Test
+      # 2️⃣ Build with Docker Compose (just check it builds)
+      - name: Build with Docker Compose
+        run: |
+          echo "Building application with Docker Compose..."
+          docker compose -f docker-compose.yml build
+          echo "✅ Build successful!"
+      # 3️⃣ Test with Maven (separate test step)
+      - name: Run Unit Tests
         run: |
           docker run --rm \
             -v ${{ github.workspace }}/zoo:/app \
             -w /app maven:3.9.8-eclipse-temurin-21 \
-            mvn clean test package -DskipTests=false
-
-      # 3️⃣ Build runtime Docker image (test build)
-      - name: Test Docker Build
+            mvn clean test
+      # 4️⃣ Build production image (if needed)
+      - name: Build Production Image
         run: |
           docker build -t zoo-api:latest zoo/
-
-      # 4️⃣ Render will auto-deploy from GitHub
-      - name: Render Auto-Deploy
+      # 5️⃣ Ready for deployment
+      - name: Ready for Deployment
         if: github.ref == 'refs/heads/development'
         run: |
-          echo "✅ Tests passed! Render will auto-deploy from GitHub repo."
-          echo "Connect your repo to Render and it will deploy automatically."
+          echo "✅ Build successful!"
+          echo "✅ Tests passed!"
+          echo "Ready for deployment to hosting platform."
