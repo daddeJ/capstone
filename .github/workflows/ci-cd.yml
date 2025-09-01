@@ -21,7 +21,7 @@ jobs:
       - name: Build with Docker Compose
         run: |
           echo "Building application with Docker Compose..."
-          docker-compose -f docker-compose.yml build
+          docker compose -f docker-compose.yml build
           echo "✅ Build successful!"
 
       # 3️⃣ Test with Maven (separate test step)
