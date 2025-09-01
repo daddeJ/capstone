@@ -26,14 +26,14 @@ jobs:
             -w /app maven:3.9.8-eclipse-temurin-21 \
             mvn clean test package -DskipTests=false
 
-      # 3️⃣ Build runtime Docker image
-      - name: Build Docker image
+      # 3️⃣ Build runtime Docker image (test build)
+      - name: Test Docker Build
         run: |
           docker build -t zoo-api:latest zoo/
 
-      # 4️⃣ Deploy to Railway (Railway will pull from GitHub and build)
-      - name: Deploy to Railway
+      # 4️⃣ Render will auto-deploy from GitHub
+      - name: Render Auto-Deploy
         if: github.ref == 'refs/heads/development'
         run: |
-          echo "Railway will auto-deploy from GitHub integration"
-          echo "No manual deployment needed - Railway watches this repo"
+          echo "✅ Tests passed! Render will auto-deploy from GitHub repo."
+          echo "Connect your repo to Render and it will deploy automatically."
