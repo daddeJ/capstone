@@ -12,7 +12,7 @@ on:
 jobs:
   ci-cd:
     runs-on: ubuntu-latest
-
+    
     steps:
       # 1️⃣ Checkout code
       - name: Checkout repository
@@ -43,18 +43,18 @@ jobs:
         run: |
           docker push ${{ secrets.DOCKER_USERNAME }}/zoo-api:latest
 
-      # 6️⃣ Install Fly CLI
+      # 6️⃣ Install Fly CLI and add to PATH
       - name: Install Fly CLI
         run: |
           curl -L https://fly.io/install.sh | sh
-          export PATH="$HOME/.fly/bin:$PATH"
-      
+          echo "$HOME/.fly/bin" >> $GITHUB_PATH
+
       # 7️⃣ Fly login using API token
       - name: Fly Login
-        run: fly auth login ${{ secrets.FLY_API_TOKEN }}
-      
+        run: |
+          echo "${{ secrets.FLY_API_TOKEN }}" | fly auth login
+
       # 8️⃣ Deploy to Fly.io
       - name: Deploy to Fly.io
-        run: fly deploy --image ${{ secrets.DOCKER_USERNAME }}/zoo-api:latest
-
-      
+        run: |
+          fly deploy --image ${{ secrets.DOCKER_USERNAME }}/zoo-api:latest
