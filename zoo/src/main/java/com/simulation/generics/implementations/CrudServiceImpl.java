@@ -11,15 +11,16 @@ import java.util.Optional;
 import com.simulation.generics.interfaces.CrudService;
 import org.springframework.stereotype.Service;
 
+@Service
 public class CrudServiceImpl<T, ID> implements CrudService<T, ID> {
     private final Map<ID, T> storage = new HashMap<>();
-    // TO DO
-    // update constructor and inject repository to use DB as storage
-    // private final GenericRepository<T, ID> repository;
-    //
-    // public CrudService(GenericRepository<T, ID> repository) {
-    //     this.repository = repository;
-    // }
+    /* TODO:
+        update constructor and inject repository to use DB as storage
+        private final GenericRepository<T, ID> repository;
+        public CrudService(GenericRepository<T, ID> repository) {
+           this.repository = repository;
+        }
+    */
     @Override
     public T create(T entity) {
         try {

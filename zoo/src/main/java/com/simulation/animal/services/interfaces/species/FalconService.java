@@ -1,8 +1,4 @@
-package com.simulation.animal.services.interfaces.category;
-
-import com.simulation.animal.entities.category.Pachyderm;
-
-import java.util.Optional;
+package com.simulation.animal.services.interfaces.species;
 /*
 TODO: define operation in interface
  - Declares a contract for a specific operation that any implementing class must provide.
@@ -12,7 +8,5 @@ TODO: define operation in interface
         Optional<Pachyderm> getHeaviestPachyderm();
     }
 */
-public interface PachydermService {
-    Optional<Pachyderm> getHeaviestPachyderm();
-    Optional<Pachyderm> getTallestPachyderm();
+public interface FalconService {
 }
