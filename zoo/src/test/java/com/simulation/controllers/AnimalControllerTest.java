@@ -1,6 +1,7 @@
 package com.simulation.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.simulation.animal.entities.category.Pachyderm;
 import com.simulation.zoo.controllers.AnimalController;
 import com.simulation.animal.entities.Animal;
 import com.simulation.animal.services.interfaces.AnimalService;
@@ -249,5 +250,28 @@ public class AnimalControllerTest {
                 .andExpect(jsonPath("$[0].species").value("Rhino"))
                 .andExpect(jsonPath("$[0].name").value("Rhino"));
 
+    }
+
+    @Test
+    void testCreatePachyderm() throws Exception {
+        Pachyderm elephant = new Pachyderm();
+        elephant.setId(8L);
+        elephant.setAnimalId("A008");
+        elephant.setName("Chaotic Chucky");
+        elephant.setCategory("Pachyderm");
+        elephant.setSpecies("Elephant");
+        elephant.setWeight(5000);
+        elephant.setHeight(3.2);
+
+        when(animalService.create(any(Animal.class))).thenReturn(elephant);
+
+        mockMvc.perform(post("/animals")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(elephant)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(8L))
+                .andExpect(jsonPath("$.name").value("Chaotic Chucky"))
+                .andExpect(jsonPath("$.weight").value(5000))
+                .andExpect(jsonPath("$.height").value(3.2));
     }
 }

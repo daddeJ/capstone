@@ -83,10 +83,13 @@ public class AnimalServiceTest {
 
     @Test
     void testSelectFelines() {
-        List<Animal> felines = animalService.readAll().stream()
-                .filter(a -> "Feline".equals(a.getCategory()))
-                .toList();
-
+        List<Animal> felines = animalService.selectByCategory("Feline");
         assertEquals(2, felines.size());
+    }
+
+    @Test
+    void testSelectRhino() {
+        List<Animal> felines = animalService.selectBySpecies("Rhino");
+        assertEquals(1, felines.size());
     }
 }

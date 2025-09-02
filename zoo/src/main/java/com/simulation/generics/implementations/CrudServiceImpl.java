@@ -11,7 +11,6 @@ import java.util.Optional;
 import com.simulation.generics.interfaces.CrudService;
 import org.springframework.stereotype.Service;
 
-@Service
 public class CrudServiceImpl<T, ID> implements CrudService<T, ID> {
     private final Map<ID, T> storage = new HashMap<>();
     // TO DO
