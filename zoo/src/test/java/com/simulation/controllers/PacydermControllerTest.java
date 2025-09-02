@@ -21,7 +21,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
-@ActiveProfiles("test")
 public class PacydermControllerTest {
     @Mock
     private PachydermService pachydermService;

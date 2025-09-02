@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/animals/category/pachyderm")
-@Tag(name = "Pachyderm", description = "Pachyderm operation")
+@Tag(name = "Category - Pachyderm", description = "Pachyderm operation")
 public class PachydermController {
     private final PachydermService pachydermService;
 
@@ -22,14 +22,14 @@ public class PachydermController {
 
     @GetMapping("/heaviest")
     public ResponseEntity<Pachyderm> getHeaviestPachyderm() {
-        Optional<Pachyderm> pachyderm = ((PachydermService) pachydermService).getHeaviestPachyderm();
+        Optional<Pachyderm> pachyderm = pachydermService.getHeaviestPachyderm();
         return  pachyderm.map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/tallest")
     public ResponseEntity<Pachyderm> getTallestPachyderm() {
-        Optional<Pachyderm> pachyderm = ((PachydermService) pachydermService).getTallestPachyderm();
+        Optional<Pachyderm> pachyderm = pachydermService.getTallestPachyderm();
         return  pachyderm.map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
