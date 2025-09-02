@@ -13,31 +13,36 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      # 1️⃣ Checkout code
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # 2️⃣ Build with Docker Compose (just check it builds)
       - name: Build with Docker Compose
         run: |
           echo "Building application with Docker Compose..."
           docker compose -f docker-compose.yml build
           echo "✅ Build successful!"
-      # 3️⃣ Test with Maven (separate test step)
       - name: Run Unit Tests
         run: |
           docker run --rm \
             -v ${{ github.workspace }}/zoo:/app \
             -w /app maven:3.9.8-eclipse-temurin-21 \
             mvn clean test
-      # 4️⃣ Build production image (if needed)
       - name: Build Production Image
         run: |
           docker build -t zoo-api:latest zoo/
-      # 5️⃣ Ready for deployment
+
       - name: Ready for Deployment
         if: github.ref == 'refs/heads/development'
         run: |
           echo "✅ Build successful!"
           echo "✅ Tests passed!"
           echo "Ready for deployment to hosting platform."
+      - name: Deploy to Render
+        if: github.ref == 'refs/heads/development'
+        run: |
+          curl -X POST \
+            -H "Accept: application/json" \
+            -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '{"clearCache": "do_not_clear"}' \
+            https://api.render.com/v1/services/srv-d2qs7ure5dus73cgsba0/deploys
