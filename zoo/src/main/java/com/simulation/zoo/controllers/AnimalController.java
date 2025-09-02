@@ -19,12 +19,12 @@ import java.util.Optional;
 @RequestMapping("animals")
 @Tag(name = "Animals", description = "Animals management API")
 public class AnimalController {
-    private CrudService<Animal, Long> crudService;
-    private AnimalService animalService;
+    private final CrudService<Animal, Long> crudService;
+    private final AnimalService animalService;
 
-    public  AnimalController() {
-        crudService = new CrudServiceImpl<>();
-        animalService = new AnimalServiceImpl(crudService);
+    public AnimalController(CrudService<Animal, Long> crudService, AnimalService animalService) {
+        this.crudService = crudService;
+        this.animalService = animalService;
     }
 
     @PostMapping
