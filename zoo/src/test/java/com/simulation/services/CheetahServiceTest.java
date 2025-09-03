@@ -1,5 +1,21 @@
 package com.simulation.services;
 
+import com.simulation.animal.entities.Animal;
+import com.simulation.animal.entities.species.Cheetah;
+import com.simulation.animal.services.implementations.species.CheetahServiceImpl;
+import com.simulation.animal.services.interfaces.AnimalService;
+import com.simulation.animal.services.interfaces.species.CheetahService;
+import com.simulation.generics.implementations.CrudServiceImpl;
+import com.simulation.generics.interfaces.CrudService;
+import com.simulation.mocks.MockAnimalFactory;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class CheetahServiceTest {
 //TODO: define service test class
 //    - Create a JUnit test class for testing service layer operations.
@@ -14,6 +30,8 @@ public class CheetahServiceTest {
 //        private AnimalService animalService;
 //        private CrudService<Animal, Long> crudService;
 //
+    private AnimalService cheetahService;
+    private CrudService<Animal, Long> crudService;
 //TODO: set up test environment with '@BeforeEach'
 //    - Initializes service and dependencies before each test.
 //    - Optionally pre-load mock data for consistent testing.
@@ -25,6 +43,27 @@ public class CheetahServiceTest {
 //            MockAnimalFactory.getMockAnimals().forEach(animalService::create);
 //        }
 //
+    @BeforeEach
+    void setUp() {
+        crudService = new CrudServiceImpl<>();
+        cheetahService = new CheetahServiceImpl(crudService);
+        MockAnimalFactory.getMockCheetah().forEach(cheetahService::create);
+    }
+
+    @Test
+    void testReadAllCheetah() {
+        List<Animal> all = cheetahService.readAll();
+        assertEquals(5, all.size());
+    }
+
+    @Test
+    void testGetBySpotPattern() {
+        Optional<Cheetah> cheetah = ((CheetahService) cheetahService).getBySpotPattern("solid black round spots");
+        assertEquals(5l, cheetah.get().getId());
+        assertEquals("Mud Birdy", cheetah.get().getName());
+        assertEquals("Feline", cheetah.get().getCategory());
+        assertEquals("solid black round spots", cheetah.get().getSpotpattern());
+    }
 //TODO: test create operation
 //    - Verifies that the service correctly adds a new entity.
 //    - Checks that the list size increases or the entity is retrievable.

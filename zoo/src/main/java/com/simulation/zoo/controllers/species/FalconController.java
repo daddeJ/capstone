@@ -1,5 +1,20 @@
 package com.simulation.zoo.controllers.species;
 
+import com.simulation.animal.entities.species.Elephant;
+import com.simulation.animal.entities.species.Falcon;
+import com.simulation.animal.services.interfaces.species.ElephantService;
+import com.simulation.animal.services.interfaces.species.FalconService;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Optional;
+
+@RestController
+@RequestMapping("animals/species/falcon")
+@Tag(name = "Species - Falcon", description = "Falcon operation")
 public class FalconController {
 //TODO: define annotation as '@RestController'
 //    - Marks a class as a REST API controller.
@@ -7,7 +22,17 @@ public class FalconController {
 //    Example:
 //        @RestController
 //        public class ExampleController { ... }
+    private final FalconService falconService;
+    public FalconController(FalconService falconService) {
+        this.falconService = falconService;
+    }
 
+    @GetMapping("/maxbeack")
+    public ResponseEntity<Falcon> getLongestTrunkLength() {
+        Optional<Falcon> falcon = falconService.getMaxBeackStrength();
+        return falcon.map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
 //TODO: define annotation as '@RequestMapping("/parent/child/type")'
 //    - Maps HTTP requests with the specified path to the annotated class or method.
 //    Example:

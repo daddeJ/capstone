@@ -1,5 +1,21 @@
 package com.simulation.services;
 
+import com.simulation.animal.entities.Animal;
+import com.simulation.animal.entities.species.Falcon;
+import com.simulation.animal.services.implementations.species.FalconServiceImpl;
+import com.simulation.animal.services.interfaces.AnimalService;
+import com.simulation.animal.services.interfaces.species.FalconService;
+import com.simulation.generics.implementations.CrudServiceImpl;
+import com.simulation.generics.interfaces.CrudService;
+import com.simulation.mocks.MockAnimalFactory;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class FalconServiceTest {
 //TODO: define service test class
 //    - Create a JUnit test class for testing service layer operations.
@@ -7,6 +23,27 @@ public class FalconServiceTest {
 //    Example:
 //        public class AnimalServiceTest { ... }
 //
+    private AnimalService falconService;
+    private CrudService<Animal, Long> crudService;
+
+    @BeforeEach
+    void setUp() {
+        crudService = new CrudServiceImpl<>();
+        falconService = new FalconServiceImpl(crudService);
+        MockAnimalFactory.getMockFalcon().forEach(falconService::create);
+    }
+
+    @Test
+    void testReadAllElephant() {
+        List<Animal> all = falconService.readAll();
+        assertEquals(5, all.size());
+    }
+
+    @Test
+    void testGetLongestTrunkLength() {
+        Optional<Falcon> falcon = ((FalconService) falconService).getMaxBeackStrength();
+        assertEquals(5.4, falcon.get().getBeackstrength());
+    }
 //TODO: declare service and dependencies
 //    - Define service under test and any required dependencies (e.g., CrudService).
 //    - Allows initialization and injection before each test.

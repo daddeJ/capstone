@@ -1,5 +1,29 @@
 package com.simulation.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.simulation.animal.entities.category.Bird;
+import com.simulation.animal.entities.category.Feline;
+import com.simulation.animal.services.interfaces.category.FelineService;
+import com.simulation.zoo.controllers.category.FelineController;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import java.util.Optional;
+
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@ExtendWith(MockitoExtension.class)
 public class FelineControllerTest {
 //TODO: annotate test class with '@ExtendWith(MockitoExtension.class)'
 //    - Enables Mockito annotations (@Mock, @InjectMocks) and integration with JUnit 5.
@@ -14,6 +38,17 @@ public class FelineControllerTest {
 //        @Mock
 //        private AnimalService animalService;
 //
+    @Mock
+    private FelineService felineService;
+
+    @InjectMocks
+    private FelineController felineController;
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 //TODO: inject controller under test with '@InjectMocks'
 //    - Creates an instance of the controller with mocks injected.
 //    - Enables testing the controller independently.
@@ -30,6 +65,74 @@ public class FelineControllerTest {
 //            mockMvc = MockMvcBuilders.standaloneSetup(animalController).build();
 //        }
 //
+    @BeforeEach
+    void setUp() {
+        objectMapper = new ObjectMapper();
+        mockMvc = MockMvcBuilders.standaloneSetup(felineController).build();
+    }
+
+    @Test
+    void shouldReturnLongestClawLength_WhenExists() throws Exception {
+        Feline feline  = createMockFeline();
+        Optional<Feline> optionalFeline = Optional.of(feline);
+
+        when(felineService.getLongestClawLength()).thenReturn(optionalFeline);
+
+        mockMvc.perform(get("/animals/category/feline/claw")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value(feline.getName()))
+                .andExpect(jsonPath("$.species").value(feline.getSpecies()))
+                .andExpect(jsonPath("$.clawlength").value(feline.getClawlength()));
+    }
+
+    @Test
+    void shouldReturnLongestClawLength_WhenNotExist() throws Exception {
+        when(felineService.getLongestClawLength()).thenReturn(Optional.empty());
+
+        mockMvc.perform(get("/animals/category/feline/claw")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void shouldReturnLongestTailLength_WhenExists() throws Exception {
+        Feline feline  = createMockFeline();
+        Optional<Feline> optionalFeline = Optional.of(feline);
+
+        when(felineService.getLongestTailLength()).thenReturn(optionalFeline);
+
+        mockMvc.perform(get("/animals/category/feline/tail")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value(feline.getName()))
+                .andExpect(jsonPath("$.species").value(feline.getSpecies()))
+                .andExpect(jsonPath("$.taillength").value(feline.getTaillength()));
+    }
+
+    @Test
+    void shouldReturnLongestTailLength_WhenNotExist() throws Exception {
+        when(felineService.getLongestTailLength()).thenReturn(Optional.empty());
+
+        mockMvc.perform(get("/animals/category/feline/tail")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    private Feline createMockFeline() {
+        Feline feline = new Feline() {{
+            setId(5L);
+            setAnimalId("A005");
+            setName("Mud Birdy");
+            setCategory("Bird");
+            setSpecies("Falcon");
+            setHealthy(false);
+            setClawlength(1.7);
+            setTaillength(3.2);
+        }};
+
+        return feline;
+    }
 //TODO: test POST endpoint
 //    - Simulates HTTP POST request to create a resource.
 //    - Verifies response status and JSON content.

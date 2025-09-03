@@ -1,6 +1,34 @@
 package com.simulation.animal.services.implementations.category;
 
-public class FelineServiceImpl {
+import com.simulation.animal.entities.Animal;
+import com.simulation.animal.entities.category.Feline;
+import com.simulation.animal.services.implementations.AnimalServiceImpl;
+import com.simulation.animal.services.interfaces.category.FelineService;
+import com.simulation.generics.interfaces.CrudService;
+
+import java.util.Comparator;
+import java.util.Optional;
+
+public class FelineServiceImpl extends AnimalServiceImpl implements FelineService {
+    public FelineServiceImpl(CrudService<Animal, Long> crudService) {
+        super(crudService);
+    }
+
+    @Override
+    public Optional<Feline> getLongestClawLength() {
+        return readAll().stream()
+                .filter(Feline.class::isInstance)
+                .map(Feline.class::cast)
+                .max(Comparator.comparingDouble(Feline::getClawlength));
+    }
+
+    @Override
+    public Optional<Feline> getLongestTailLength() {
+        return  readAll().stream()
+                .filter(Feline.class::isInstance)
+                .map(Feline.class::cast)
+                .max(Comparator.comparingDouble(Feline::getTaillength));
+    }
 //TODO: extends `ParentClassServiceImpl` and implements `ClassService`
 // - Inherits common behavior from a base service class (ParentClassServiceImpl).
 // - Implements the specific interface (ClassService) to provide concrete operations.

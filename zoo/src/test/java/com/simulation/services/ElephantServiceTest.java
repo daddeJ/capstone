@@ -1,5 +1,21 @@
 package com.simulation.services;
 
+import com.simulation.animal.entities.Animal;
+import com.simulation.animal.entities.species.Elephant;
+import com.simulation.animal.services.implementations.species.ElephantServiceImpl;
+import com.simulation.animal.services.interfaces.AnimalService;
+import com.simulation.animal.services.interfaces.species.ElephantService;
+import com.simulation.generics.implementations.CrudServiceImpl;
+import com.simulation.generics.interfaces.CrudService;
+import com.simulation.mocks.MockAnimalFactory;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class ElephantServiceTest {
 //TODO: define service test class
 //    - Create a JUnit test class for testing service layer operations.
@@ -7,6 +23,8 @@ public class ElephantServiceTest {
 //    Example:
 //        public class AnimalServiceTest { ... }
 //
+    private AnimalService elephantService;
+    private CrudService<Animal, Long> crudService;
 //TODO: declare service and dependencies
 //    - Define service under test and any required dependencies (e.g., CrudService).
 //    - Allows initialization and injection before each test.
@@ -14,6 +32,24 @@ public class ElephantServiceTest {
 //        private AnimalService animalService;
 //        private CrudService<Animal, Long> crudService;
 //
+    @BeforeEach
+    void setUp() {
+        crudService = new CrudServiceImpl<>();
+        elephantService = new ElephantServiceImpl(crudService);
+        MockAnimalFactory.getMockElephant().forEach(elephantService::create);
+    }
+
+    @Test
+    void testReadAllElephant() {
+        List<Animal> all = elephantService.readAll();
+        assertEquals(5, all.size());
+    }
+
+    @Test
+    void testGetLongestTrunkLength() {
+        Optional<Elephant> pachyderm = ((ElephantService) elephantService).getLongestTrunkLength();
+        assertEquals(4.0, pachyderm.get().getTrunklength());
+    }
 //TODO: set up test environment with '@BeforeEach'
 //    - Initializes service and dependencies before each test.
 //    - Optionally pre-load mock data for consistent testing.

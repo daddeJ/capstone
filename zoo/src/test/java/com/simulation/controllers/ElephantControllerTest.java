@@ -1,5 +1,32 @@
 package com.simulation.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.simulation.animal.entities.species.Elephant;
+import com.simulation.animal.entities.species.Rhino;
+import com.simulation.animal.services.interfaces.species.ElephantService;
+import com.simulation.animal.services.interfaces.species.RhinoService;
+import com.simulation.mocks.MockAnimalFactory;
+import com.simulation.zoo.controllers.species.ElephantController;
+import com.simulation.zoo.controllers.species.RhinoController;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import java.util.Optional;
+
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@ExtendWith(MockitoExtension.class)
 public class ElephantControllerTest {
 //TODO: annotate test class with '@ExtendWith(MockitoExtension.class)'
 //    - Enables Mockito annotations (@Mock, @InjectMocks) and integration with JUnit 5.
@@ -7,6 +34,17 @@ public class ElephantControllerTest {
 //        @ExtendWith(MockitoExtension.class)
 //        public class AnimalControllerTest { ... }
 //
+    @Mock
+    private ElephantService elephantService;
+
+    @InjectMocks
+    private ElephantController elephantController;
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 //TODO: mock dependencies with '@Mock'
 //    - Creates mock instances of dependencies (services) for testing.
 //    - Avoids calling actual implementations and allows controlled behavior.
@@ -21,6 +59,37 @@ public class ElephantControllerTest {
 //        @InjectMocks
 //        private AnimalController animalController;
 //
+    @BeforeEach
+    void setUp() {
+        objectMapper = new ObjectMapper();
+        mockMvc = MockMvcBuilders.standaloneSetup(elephantController).build();
+    }
+
+    @Test
+    void shoudlReturnLongestTrunkLength_WhenExists() throws Exception {
+        Elephant elephant = (Elephant) MockAnimalFactory.getMockElephant().get(0);
+        Optional<Elephant> optionalElephant = Optional.of(elephant);
+
+        when(elephantService.getLongestTrunkLength()).thenReturn(optionalElephant);
+
+        mockMvc.perform(get("/animals/species/elephant/maxtrunk")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value(elephant.getName()))
+                .andExpect(jsonPath("$.weight").value(elephant.getWeight()))
+                .andExpect(jsonPath("$.height").value(elephant.getHeight()))
+                .andExpect(jsonPath("$.species").value(elephant.getSpecies()))
+                .andExpect(jsonPath("$.trunklength").value(elephant.getTrunklength()));
+    }
+
+    @Test
+    void shouldReturnNotFound_WhenLongestTrunkLengthDoesNotExist() throws Exception{
+        when(elephantService.getLongestTrunkLength()).thenReturn(Optional.empty());
+
+        mockMvc.perform(get("/animals/species/elephant/maxtrunk")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
 //TODO: set up MockMvc for controller testing
 //    - Initializes MockMvc for standalone controller testing.
 //    - Allows simulation of HTTP requests/responses without running the full server.

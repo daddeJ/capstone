@@ -1,5 +1,21 @@
 package com.simulation.services;
 
+import com.simulation.animal.entities.Animal;
+import com.simulation.animal.entities.category.Feline;
+import com.simulation.animal.services.implementations.category.FelineServiceImpl;
+import com.simulation.animal.services.interfaces.AnimalService;
+import com.simulation.animal.services.interfaces.category.FelineService;
+import com.simulation.generics.implementations.CrudServiceImpl;
+import com.simulation.generics.interfaces.CrudService;
+import com.simulation.mocks.MockAnimalFactory;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class FelineServiceTest {
 //TODO: define service test class
 //    - Create a JUnit test class for testing service layer operations.
@@ -7,6 +23,8 @@ public class FelineServiceTest {
 //    Example:
 //        public class AnimalServiceTest { ... }
 //
+    private AnimalService felineService;
+    private CrudService<Animal, Long> crudService;
 //TODO: declare service and dependencies
 //    - Define service under test and any required dependencies (e.g., CrudService).
 //    - Allows initialization and injection before each test.
@@ -24,7 +42,32 @@ public class FelineServiceTest {
 //            animalService = new AnimalServiceImpl(crudService);
 //            MockAnimalFactory.getMockAnimals().forEach(animalService::create);
 //        }
-//
+// 3.2 1.8
+    @BeforeEach
+    void setUp() {
+        crudService = new CrudServiceImpl<>();
+        felineService = new FelineServiceImpl(crudService);
+        MockAnimalFactory.getMockFeline().forEach(felineService::create);
+    }
+
+    @Test
+    void testReadAllAnimal() {
+        List<Animal> feline = felineService.readAll();
+        assertEquals(5, feline.size());
+    }
+
+    @Test
+    void testLongestClawLength() {
+        Optional<Feline> feline = ((FelineService) felineService).getLongestClawLength();
+        assertEquals(1.8, feline.get().getClawlength());
+    }
+
+    @Test
+    void testLongestTailLength() {
+        Optional<Feline> feline = ((FelineService) felineService).getLongestTailLength();
+        assertEquals(3.2, feline.get().getTaillength());
+    }
+
 //TODO: test create operation
 //    - Verifies that the service correctly adds a new entity.
 //    - Checks that the list size increases or the entity is retrievable.

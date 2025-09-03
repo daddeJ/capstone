@@ -1,5 +1,19 @@
 package com.simulation.zoo.controllers.category;
 
+import com.simulation.animal.entities.Animal;
+import com.simulation.animal.entities.category.Feline;
+import com.simulation.animal.services.interfaces.category.FelineService;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Optional;
+
+@RestController
+@RequestMapping("animals/category/feline")
+@Tag(name = "Category - Feline", description = "Feline Operation")
 public class FelineController {
 //TODO: define annotation as '@RestController'
 //    - Marks a class as a REST API controller.
@@ -7,13 +21,29 @@ public class FelineController {
 //    Example:
 //        @RestController
 //        public class ExampleController { ... }
-
+    private final FelineService felineService;
 //TODO: define annotation as '@RequestMapping("/parent/child/type")'
 //    - Maps HTTP requests with the specified path to the annotated class or method.
 //    Example:
 //        @RequestMapping("/api/pachyderms")
 //        public class PachydermController { ... }
+    public FelineController(FelineService felineService) {
+        this.felineService = felineService;
+    }
 
+    @GetMapping("/claw")
+    public ResponseEntity<Feline> getLongestClawLength() {
+        Optional<Feline> feline = felineService.getLongestClawLength();
+        return feline.map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/tail")
+    public ResponseEntity<Feline> getLongestTailLength() {
+        Optional<Feline> feline = felineService.getLongestTailLength();
+        return feline.map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
 //TODO: define annotation as '@Tag(name = "Category - Pachyderm", description = "Pachyderm operation")'
 //    - Adds metadata for API documentation (OpenAPI/Swagger).
 //    - Categorizes endpoints under a specific name with a description.

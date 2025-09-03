@@ -1,5 +1,19 @@
 package com.simulation.zoo.controllers.species;
 
+import com.simulation.animal.entities.species.Cheetah;
+import com.simulation.animal.services.interfaces.species.CheetahService;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Optional;
+
+@RestController
+@RequestMapping("/animals/feline/cheetah")
+@Tag(name = "Species - Cheetah", description = "Cheetah operation")
 public class CheetahController {
 //TODO: define annotation as '@RestController'
 //    - Marks a class as a REST API controller.
@@ -7,7 +21,18 @@ public class CheetahController {
 //    Example:
 //        @RestController
 //        public class ExampleController { ... }
+    private final CheetahService cheetahService;
 
+    public CheetahController(CheetahService cheetahService) {
+        this.cheetahService = cheetahService;
+    }
+
+    @GetMapping("/spotpattern/{pattern}")
+    public ResponseEntity<Cheetah> getBySpotPattern(@PathVariable String pattern) {
+        Optional<Cheetah> cheetah = cheetahService.getBySpotPattern(pattern);
+        return cheetah.map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
 //TODO: define annotation as '@RequestMapping("/parent/child/type")'
 //    - Maps HTTP requests with the specified path to the annotated class or method.
 //    Example:

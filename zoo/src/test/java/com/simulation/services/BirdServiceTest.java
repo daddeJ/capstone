@@ -1,5 +1,22 @@
 package com.simulation.services;
 
+import com.simulation.animal.entities.Animal;
+import com.simulation.animal.entities.category.Bird;
+import com.simulation.animal.services.implementations.AnimalServiceImpl;
+import com.simulation.animal.services.implementations.category.BirdServiceImpl;
+import com.simulation.animal.services.interfaces.AnimalService;
+import com.simulation.animal.services.interfaces.category.BirdService;
+import com.simulation.generics.implementations.CrudServiceImpl;
+import com.simulation.generics.interfaces.CrudService;
+import com.simulation.mocks.MockAnimalFactory;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class BirdServiceTest {
 //TODO: define service test class
 //    - Create a JUnit test class for testing service layer operations.
@@ -14,6 +31,8 @@ public class BirdServiceTest {
 //        private AnimalService animalService;
 //        private CrudService<Animal, Long> crudService;
 //
+    private AnimalService birdService;
+    private CrudService<Animal, Long> crudService;
 //TODO: set up test environment with '@BeforeEach'
 //    - Initializes service and dependencies before each test.
 //    - Optionally pre-load mock data for consistent testing.
@@ -25,6 +44,12 @@ public class BirdServiceTest {
 //            MockAnimalFactory.getMockAnimals().forEach(animalService::create);
 //        }
 //
+    @BeforeEach
+    void setUp() {
+        crudService = new CrudServiceImpl<>();
+        birdService = new BirdServiceImpl(crudService);
+        MockAnimalFactory.getMockBird().forEach(birdService::create);
+    }
 //TODO: test create operation
 //    - Verifies that the service correctly adds a new entity.
 //    - Checks that the list size increases or the entity is retrievable.
@@ -36,6 +61,23 @@ public class BirdServiceTest {
 //            assertEquals(6, animalService.readAll().size());
 //        }
 //
+    @Test
+    void testReadAllAnimal() {
+        List<Animal> bird = birdService.readAll();
+        assertEquals(5, bird.size());
+    }
+
+    @Test
+    void testLongestWingSpan() {
+        Optional<Bird> bird = ((BirdService) birdService).getLongestWingSpan();
+        assertEquals(3.2, bird.get().getWingspan());
+    }
+
+    @Test
+    void testLongestBeakLength() {
+        Optional<Bird> bird = ((BirdService) birdService).getLongestBeak();
+        assertEquals(1.8, bird.get().getBeaklength());
+    }
 //TODO: test update operation
 //    - Verifies that the service correctly updates an existing entity.
 //    - Checks that updated fields are reflected and unchanged fields remain.

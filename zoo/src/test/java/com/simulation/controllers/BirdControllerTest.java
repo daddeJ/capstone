@@ -1,5 +1,28 @@
 package com.simulation.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.simulation.animal.entities.category.Bird;
+import com.simulation.animal.services.interfaces.category.BirdService;
+import com.simulation.zoo.controllers.category.BirdController;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import java.util.Optional;
+
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@ExtendWith(MockitoExtension.class)
 public class BirdControllerTest {
 //TODO: annotate test class with '@ExtendWith(MockitoExtension.class)'
 //    - Enables Mockito annotations (@Mock, @InjectMocks) and integration with JUnit 5.
@@ -14,6 +37,8 @@ public class BirdControllerTest {
 //        @Mock
 //        private AnimalService animalService;
 //
+    @Mock
+    private BirdService birdService;
 //TODO: inject controller under test with '@InjectMocks'
 //    - Creates an instance of the controller with mocks injected.
 //    - Enables testing the controller independently.
@@ -21,6 +46,14 @@ public class BirdControllerTest {
 //        @InjectMocks
 //        private AnimalController animalController;
 //
+    @InjectMocks
+    private BirdController birdController;
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 //TODO: set up MockMvc for controller testing
 //    - Initializes MockMvc for standalone controller testing.
 //    - Allows simulation of HTTP requests/responses without running the full server.
@@ -30,6 +63,73 @@ public class BirdControllerTest {
 //            mockMvc = MockMvcBuilders.standaloneSetup(animalController).build();
 //        }
 //
+    @BeforeEach
+    void setUp() {
+        objectMapper = new ObjectMapper();
+        mockMvc = MockMvcBuilders.standaloneSetup(birdController).build();
+    }
+
+    @Test
+    void shouldReturnLongestWingspanLength_WhenExists() throws Exception {
+        Bird bird  = createMockBird();
+        Optional<Bird> optionalBird = Optional.of(bird);
+
+        when(birdService.getLongestWingSpan()).thenReturn(optionalBird);
+
+        mockMvc.perform(get("/animals/category/bird/wingspan")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value(bird.getName()))
+                .andExpect(jsonPath("$.species").value(bird.getSpecies()))
+                .andExpect(jsonPath("$.wingspan").value(bird.getWingspan()));
+    }
+
+    @Test
+    void shouldReturnLongestWingspanLength_WhenNotExists() throws Exception {
+        when(birdService.getLongestWingSpan()).thenReturn(Optional.empty());
+
+        mockMvc.perform(get("/animals/category/bird/wingspan")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void shouldReturnLongestBeakLength_WhenExists() throws Exception {
+        Bird bird  = createMockBird();
+        Optional<Bird> optionalBird = Optional.of(bird);
+
+        when(birdService.getLongestBeak()).thenReturn(optionalBird);
+
+        mockMvc.perform(get("/animals/category/bird/beak")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value(bird.getName()))
+                .andExpect(jsonPath("$.species").value(bird.getSpecies()))
+                .andExpect(jsonPath("$.beaklength").value(bird.getBeaklength()));
+    }
+
+    @Test
+    void shouldReturnLongestBeakLength_WhenNotExists() throws Exception {
+        when(birdService.getLongestBeak()).thenReturn(Optional.empty());
+
+        mockMvc.perform(get("/animals/category/bird/beak")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    private Bird createMockBird() {
+        Bird bird = new Bird() {{
+            setId(5L);
+            setAnimalId("A005");
+            setName("Mud Birdy");
+            setCategory("Bird");
+            setSpecies("Falcon");
+            setHealthy(false);
+            setBeaklength(1.7);
+            setWingspan(3.2);
+        }};
+        return bird;
+    }
 //TODO: test POST endpoint
 //    - Simulates HTTP POST request to create a resource.
 //    - Verifies response status and JSON content.

@@ -2,10 +2,20 @@ package com.simulation.zoo.config;
 
 import com.simulation.animal.entities.Animal;
 import com.simulation.animal.services.implementations.AnimalServiceImpl;
+import com.simulation.animal.services.implementations.category.BirdServiceImpl;
+import com.simulation.animal.services.implementations.category.FelineServiceImpl;
 import com.simulation.animal.services.implementations.category.PachydermServiceImpl;
+import com.simulation.animal.services.implementations.species.CheetahServiceImpl;
+import com.simulation.animal.services.implementations.species.ElephantServiceImpl;
+import com.simulation.animal.services.implementations.species.FalconServiceImpl;
 import com.simulation.animal.services.implementations.species.RhinoServiceImpl;
 import com.simulation.animal.services.interfaces.AnimalService;
+import com.simulation.animal.services.interfaces.category.BirdService;
+import com.simulation.animal.services.interfaces.category.FelineService;
 import com.simulation.animal.services.interfaces.category.PachydermService;
+import com.simulation.animal.services.interfaces.species.CheetahService;
+import com.simulation.animal.services.interfaces.species.ElephantService;
+import com.simulation.animal.services.interfaces.species.FalconService;
 import com.simulation.animal.services.interfaces.species.RhinoService;
 import com.simulation.generics.implementations.CrudServiceImpl;
 import com.simulation.generics.interfaces.CrudService;
@@ -79,4 +89,14 @@ public class ServiceConfiguration {
     public RhinoService rhinoService(CrudService<Animal, Long> crudService) {
         return new RhinoServiceImpl(crudService);
     }
+    @Bean
+    public BirdService birdService(CrudService<Animal, Long> crudService) { return new BirdServiceImpl(crudService); }
+    @Bean
+    public FelineService felineService(CrudService<Animal, Long> crudService) { return new FelineServiceImpl(crudService); }
+    @Bean
+    public CheetahService cheetahService(CrudService<Animal, Long> crudService) { return new CheetahServiceImpl(crudService); }
+    @Bean
+    public ElephantService elephantService(CrudService<Animal, Long> crudService) { return new ElephantServiceImpl(crudService); }
+    @Bean
+    public FalconService falconService(CrudService<Animal, Long> crudService) { return new FalconServiceImpl(crudService); }
 }

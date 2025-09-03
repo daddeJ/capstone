@@ -1,5 +1,32 @@
 package com.simulation.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.simulation.animal.entities.species.Elephant;
+import com.simulation.animal.entities.species.Falcon;
+import com.simulation.animal.services.interfaces.species.ElephantService;
+import com.simulation.animal.services.interfaces.species.FalconService;
+import com.simulation.mocks.MockAnimalFactory;
+import com.simulation.zoo.controllers.species.ElephantController;
+import com.simulation.zoo.controllers.species.FalconController;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import java.util.Optional;
+
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@ExtendWith(MockitoExtension.class)
 public class FalconControllerTest {
 //TODO: annotate test class with '@ExtendWith(MockitoExtension.class)'
 //    - Enables Mockito annotations (@Mock, @InjectMocks) and integration with JUnit 5.
@@ -7,6 +34,17 @@ public class FalconControllerTest {
 //        @ExtendWith(MockitoExtension.class)
 //        public class AnimalControllerTest { ... }
 //
+    @Mock
+    private FalconService falconService;
+
+    @InjectMocks
+    private FalconController falconController;
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 //TODO: mock dependencies with '@Mock'
 //    - Creates mock instances of dependencies (services) for testing.
 //    - Avoids calling actual implementations and allows controlled behavior.
@@ -14,6 +52,35 @@ public class FalconControllerTest {
 //        @Mock
 //        private AnimalService animalService;
 //
+    @BeforeEach
+    void setUp() {
+        objectMapper = new ObjectMapper();
+        mockMvc = MockMvcBuilders.standaloneSetup(falconController).build();
+    }
+
+    @Test
+    void shoudlReturnLongestTrunkLength_WhenExists() throws Exception {
+        Falcon falcon = (Falcon) MockAnimalFactory.getMockFalcon().get(0);
+        Optional<Falcon> optionalFalcon = Optional.of(falcon);
+
+        when(falconService.getMaxBeackStrength()).thenReturn(optionalFalcon);
+
+        mockMvc.perform(get("/animals/species/falcon/maxbeack")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value(falcon.getName()))
+                .andExpect(jsonPath("$.species").value(falcon.getSpecies()))
+                .andExpect(jsonPath("$.beackstrength").value(falcon.getBeackstrength()));
+    }
+
+    @Test
+    void shouldReturnNotFound_WhenLongestTrunkLengthDoesNotExist() throws Exception{
+        when(falconService.getMaxBeackStrength()).thenReturn(Optional.empty());
+
+        mockMvc.perform(get("/animals/species/falcon/maxbeack")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
 //TODO: inject controller under test with '@InjectMocks'
 //    - Creates an instance of the controller with mocks injected.
 //    - Enables testing the controller independently.

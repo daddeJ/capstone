@@ -1,6 +1,28 @@
 package com.simulation.animal.services.implementations.species;
 
-public class FalconServiceImpl {
+import com.simulation.animal.entities.Animal;
+import com.simulation.animal.entities.species.Elephant;
+import com.simulation.animal.entities.species.Falcon;
+import com.simulation.animal.services.implementations.category.BirdServiceImpl;
+import com.simulation.animal.services.implementations.category.FelineServiceImpl;
+import com.simulation.animal.services.interfaces.species.FalconService;
+import com.simulation.generics.interfaces.CrudService;
+
+import java.util.Comparator;
+import java.util.Optional;
+
+public class FalconServiceImpl extends BirdServiceImpl implements FalconService {
+    public FalconServiceImpl(CrudService<Animal, Long> crudService) {
+        super(crudService);
+    }
+
+    @Override
+    public Optional<Falcon> getMaxBeackStrength() {
+        return readAll().stream()
+                .filter(Falcon.class::isInstance)
+                .map(Falcon.class::cast)
+                .max(Comparator.comparingDouble(Falcon::getBeackstrength));
+    }
 //TODO: extends `ParentClassServiceImpl` and implements `ClassService`
 // - Inherits common behavior from a base service class (ParentClassServiceImpl).
 // - Implements the specific interface (ClassService) to provide concrete operations.

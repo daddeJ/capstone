@@ -1,6 +1,26 @@
 package com.simulation.animal.services.implementations.species;
 
-public class ElephantServiceImpl {
+import com.simulation.animal.entities.Animal;
+import com.simulation.animal.entities.species.Elephant;
+import com.simulation.animal.services.implementations.category.PachydermServiceImpl;
+import com.simulation.animal.services.interfaces.species.ElephantService;
+import com.simulation.generics.interfaces.CrudService;
+
+import java.util.Comparator;
+import java.util.Optional;
+
+public class ElephantServiceImpl extends PachydermServiceImpl implements ElephantService {
+    public ElephantServiceImpl(CrudService<Animal, Long> crudService) {
+        super(crudService);
+    }
+
+    @Override
+    public Optional<Elephant> getLongestTrunkLength() {
+        return readAll().stream()
+                .filter(Elephant.class::isInstance)
+                .map(Elephant.class::cast)
+                .max(Comparator.comparingDouble(Elephant::getTrunklength));
+    }
 //TODO: extends `ParentClassServiceImpl` and implements `ClassService`
 // - Inherits common behavior from a base service class (ParentClassServiceImpl).
 // - Implements the specific interface (ClassService) to provide concrete operations.

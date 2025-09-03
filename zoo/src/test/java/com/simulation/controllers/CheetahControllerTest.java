@@ -1,5 +1,26 @@
 package com.simulation.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.simulation.animal.entities.species.Cheetah;
+import com.simulation.animal.services.interfaces.species.CheetahService;
+import com.simulation.zoo.controllers.species.CheetahController;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import java.util.Optional;
+
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+@ExtendWith(MockitoExtension.class)
 public class CheetahControllerTest {
 //TODO: annotate test class with '@ExtendWith(MockitoExtension.class)'
 //    - Enables Mockito annotations (@Mock, @InjectMocks) and integration with JUnit 5.
@@ -7,6 +28,51 @@ public class CheetahControllerTest {
 //        @ExtendWith(MockitoExtension.class)
 //        public class AnimalControllerTest { ... }
 //
+    @Mock
+    private CheetahService cheetahService;
+
+    @InjectMocks
+    private CheetahController cheetahController;
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @BeforeEach
+    void setUp() {
+        objectMapper = new ObjectMapper();
+        mockMvc = MockMvcBuilders.standaloneSetup(cheetahController).build();
+    }
+
+    @Test
+    void shouldReturnBySpotPattern_WhenExists() throws Exception {
+        Cheetah cheetah = createMockCheetah();
+        Optional<Cheetah> optionalCheetah = Optional.of(cheetah);
+        when(cheetahService.getBySpotPattern("solid black round spots")).thenReturn(optionalCheetah);
+
+        mockMvc.perform(get("/animals/feline/cheetah/spotpattern/solid black round spots"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Mud Birdy"))
+                .andExpect(jsonPath("$.spotpattern").value("solid black round spots"));
+    }
+
+    private Cheetah createMockCheetah() {
+        Cheetah cheetah = new Cheetah() {{
+            setId(5L);
+            setAnimalId("A005");
+            setName("Mud Birdy");
+            setCategory("Mammal");
+            setSpecies("Cheetah");
+            setHealthy(false);
+            setClawlength(1.7);
+            setTaillength(3.2);
+            setSpotpattern("solid black round spots");
+        }};
+
+        return cheetah;
+    }
 //TODO: mock dependencies with '@Mock'
 //    - Creates mock instances of dependencies (services) for testing.
 //    - Avoids calling actual implementations and allows controlled behavior.

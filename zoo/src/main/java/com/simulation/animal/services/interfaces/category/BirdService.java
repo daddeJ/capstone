@@ -1,4 +1,9 @@
 package com.simulation.animal.services.interfaces.category;
+
+import com.simulation.animal.entities.category.Bird;
+
+import java.util.Optional;
+
 /*
 TODO: define operation in interface
  - Declares a contract for a specific operation that any implementing class must provide.
@@ -9,4 +14,6 @@ TODO: define operation in interface
     }
 */
 public interface BirdService {
+    Optional<Bird> getLongestWingSpan();
+    Optional<Bird> getLongestBeak();
 }

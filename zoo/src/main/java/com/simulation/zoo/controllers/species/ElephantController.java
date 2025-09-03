@@ -1,5 +1,19 @@
 package com.simulation.zoo.controllers.species;
 
+import com.simulation.animal.entities.species.Elephant;
+import com.simulation.animal.services.interfaces.species.ElephantService;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Optional;
+
+@RestController
+@RequestMapping("animals/species/elephant")
+@Tag(name = "Species - Elephant", description = "Elephant operation")
 public class ElephantController {
 //TODO: define annotation as '@RestController'
 //    - Marks a class as a REST API controller.
@@ -7,7 +21,17 @@ public class ElephantController {
 //    Example:
 //        @RestController
 //        public class ExampleController { ... }
+    private final ElephantService elephantService;
+    public ElephantController(ElephantService elephantService) {
+        this.elephantService = elephantService;
+    }
 
+    @GetMapping("/maxtrunk")
+    public ResponseEntity<Elephant> getLongestTrunkLength() {
+        Optional<Elephant> elephant = elephantService.getLongestTrunkLength();
+        return elephant.map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
 //TODO: define annotation as '@RequestMapping("/parent/child/type")'
 //    - Maps HTTP requests with the specified path to the annotated class or method.
 //    Example:
