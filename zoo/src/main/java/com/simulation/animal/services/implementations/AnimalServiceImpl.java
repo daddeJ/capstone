@@ -13,6 +13,7 @@ import com.simulation.animal.entities.Animal;
 import com.simulation.animal.services.interfaces.AnimalService;
 import com.simulation.generics.interfaces.CrudService;
 
+@Service
 public class AnimalServiceImpl implements AnimalService{
 
     private final CrudService<Animal, Long> crudService;
